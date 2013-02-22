@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pluggable type="plugin">
+	<name>Github Auth</name>
+	<license url="http://www.apache.org/licenses/LICENSE-2.0.html">Apache Software License 2.0</license>
+	<author url="http://konzertheld.de/">Christian Gredig</author>
+	<version>0.1</version>
+	<url>http://habariproject.org/</url>
+	<description><![CDATA[]]></description>
+	<copyright>2013</copyright>
+	<guid> f7a0a165-d2c7-42a9-8c5e-2d6923867d73</guid>
+</pluggable>
