@@ -1,5 +1,5 @@
 <?php
-namespace Habari;
+//namespace Habari;
 
 class GithubAuth extends Plugin
 {
