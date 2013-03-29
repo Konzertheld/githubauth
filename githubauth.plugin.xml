@@ -8,9 +8,9 @@
 	<description><![CDATA[
 		Use your Github credentials with Habari through OAuth.
 	]]></description>
-	<help><![CDATA[
+	<help><value><![CDATA[
 		Options: use the values you received during API application setup on Github. You can set scope and redirect URI depending on what plugins you use with Github Auth.
-	]]></help>
+	]]></value></help>
 	<copyright>2013</copyright>
 	<guid> f7a0a165-d2c7-42a9-8c5e-2d6923867d73</guid>
 </pluggable>
