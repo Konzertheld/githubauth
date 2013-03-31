@@ -26,11 +26,11 @@ class GithubAuth extends Plugin
 			{
 				case _t('Configure'):
 					$form = new FormUI( __CLASS__ );
-					$form->append( 'text', 'redirect_uri', __CLASS__ . '__redirect_uri', _t( 'Redirect URI (relative to your domain)', __CLASS__ ));
-					$form->append( 'text', 'client_id', __CLASS__ . '__client_id', _t( 'Client ID', __CLASS__ ));
-					$form->append( 'text', 'client_secret', __CLASS__ . '__client_secret', _t( 'Client Secret', __CLASS__ ));
-					$form->append( 'text', 'scope', __CLASS__ . '__scope', _t( 'Scopes (comma separated)', __CLASS__ ));
-					$form->append( 'submit', 'save', _t( 'Save' ) );
+					$form->append(FormControlLabel::wrap(_t( 'Redirect URI (relative to your domain) - defaults to "github_oauth_callback" if left empty', __CLASS__ ), FormControlText::create('redirect_uri', __CLASS__ . '__redirect_uri')));
+					$form->append(FormControlLabel::wrap(_t( 'Client ID', __CLASS__ ), FormControlText::create('client_id', __CLASS__ . '__client_id')));
+					$form->append(FormControlLabel::wrap(_t( 'Client Secret', __CLASS__ ), FormControlText::create('client_secret', __CLASS__ . '__client_secret')));
+					$form->append(FormControlLabel::wrap(_t( 'Scopes (comma separated)', __CLASS__ ), FormControlText::create('scope', __CLASS__ . '__scope')));
+					$form->append(FormControlSubmit::create('save')->set_caption('Save'));
 					$form->out();
 					break;
 			}
@@ -39,13 +39,13 @@ class GithubAuth extends Plugin
 	
 	/*
 	 * Add rewrite rule to catch the authentication result
+	 * Default to github_oauth_callback if not set
 	 */
 	public function filter_rewrite_rules($rules)
     {
 		$opts = Options::get_group( __CLASS__ );
-		if(isset($opts['redirect_uri'])) {
-			$rules[] = RewriteRule::create_url_rule('"' . $opts['redirect_uri'] . '"', 'PluginHandler', 'github_oauth_callback');
-		}
+		$callback = isset($opts['redirect_uri']) && !empty($opts['redirect_uri']) ? $opts['redirect_uri'] : "github_oauth_callback";
+		$rules[] = RewriteRule::create_url_rule('"' . $callback . '"', 'PluginHandler', 'github_oauth_callback');
         return $rules;
     }
 	
@@ -54,7 +54,11 @@ class GithubAuth extends Plugin
 	 */
 	public function filter_socialauth_services($services = array())
 	{
-		$services[] = $this->service;
+		$opts = Options::get_group( __CLASS__ );
+		if(isset($opts['client_id']) && isset($opts['client_secret'])) {
+			// If those are not set, it's of no use to make this plugin public
+			$services[] = $this->service;
+		}
 		return $services;
 	}
 	
@@ -65,7 +69,6 @@ class GithubAuth extends Plugin
 	 */
 	public function theme_socialauth_link($theme, $service, $paramarray = array())
 	{
-		// REFACTOR: Do something to avoid output of incomplete urls
 		if($service == $this->service) {
 			$opts = Options::get_group( __CLASS__ );
 			$url = "https://github.com/login/oauth/authorize?";
@@ -87,6 +90,10 @@ class GithubAuth extends Plugin
 			
 			if(isset($opts['client_id'])) {
 				$url .= "&client_id=" . $opts['client_id'];
+			}
+			else {
+				// The client id is the one obligatory argument
+				return false;
 			}
 			
 			return $url;
