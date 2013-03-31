@@ -73,7 +73,7 @@ class GithubAuth extends Plugin
 			if(isset($paramarray['scope'])) {
 				$url .= "scope=" . $paramarray['scope'];
 			}
-			else {
+			else if(isset($opts['scope'])) {
 				$url .= "scope=" . $opts['scope'];
 			}
 			
@@ -85,7 +85,9 @@ class GithubAuth extends Plugin
 				$url .= "&state=" . $paramarray['state'];
 			}
 			
-			$url .= "&client_id=" . $opts['client_id'];
+			if(isset($opts['client_id'])) {
+				$url .= "&client_id=" . $opts['client_id'];
+			}
 			
 			return $url;
 		}
