@@ -82,6 +82,8 @@ class GithubAuth extends Plugin
 			
 			if(isset($paramarray['redirect_uri'])) {
 				$url .= "&redirect_uri=" . $paramarray['redirect_uri'];
+			} else {
+				$url .= "&redirect_uri=" . URL::get('github_oauth_callback');
 			}
 
 			if(isset($paramarray['state'])) {
